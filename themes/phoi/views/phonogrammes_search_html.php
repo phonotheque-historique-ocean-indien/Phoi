@@ -6,9 +6,20 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <div class="select">
+                    <div class="field select">
                         <select>
                             <option>Albums</option>
+                            <option>-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-label is-normal">
+                    <label class="label">Pays</label>
+                </div>
+                <div class="field">
+                    <div class="select">
+                        <select>
+                            <option>reunion</option>
                             <option>-</option>
                         </select>
                     </div>
@@ -120,7 +131,7 @@
         </div>
     </div>
 
-    <button class="button is-normal" onclick="getResultsList('list');return false;"><?php _p("Search"); ?></button>
+    <button class="button is-normal" onclick="getResultsList(display);return false;"><?php _p("Search"); ?></button>
 </form>
 </div>
 <hr/>
