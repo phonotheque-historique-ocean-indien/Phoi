@@ -1,10 +1,14 @@
+<?php
+    $country = $this->getVar("country");
+?>
+
 <div class="container">
     <!-- ca_objects_fonds_html.php -->
     <form method="get" action="/index.php/Search/objects" id="search">
         <div style="margin: 40px 0;">
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                    <label class="label">Search</label>
+                    <label class="label">Chercher</label>
                 </div>
                 <div class="field-body">
                     <div class="field">
@@ -56,62 +60,66 @@
 
                 </div>
             </div>
-            <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                    <label class="label">Type de collectage</label>
+            <div class="field-body">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Type de collectage</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="select">
+                                <select>
+                                    <option>1</option>
+                                    <option>-</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="field-body">
-                    <div class="field">
-                        <div class="select">
-                            <select>
-                                <option>1</option>
-                                <option>-</option>
-                            </select>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Nature</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="select">
+                                <select>
+                                    <option>1</option>
+                                    <option>-</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                    <label class="label">Nature</label>
-                </div>
-                <div class="field-body">
-                    <div class="field">
-                        <div class="select">
-                            <select>
-                                <option>1</option>
-                                <option>-</option>
-                            </select>
+            <div class="field-body">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Type de support</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="select">
+                                <select>
+                                    <option>Type de support</option>
+                                    <option>-</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                    <label class="label">Type de support</label>
-                </div>
-                <div class="field-body">
-                    <div class="field">
-                        <div class="select">
-                            <select>
-                                <option>Type de support</option>
-                                <option>-</option>
-                            </select>
-                        </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Genre</label>
                     </div>
-                </div>
-            </div>
-            <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                    <label class="label">Genre</label>
-                </div>
-                <div class="field-body">
-                    <div class="field">
-                        <div class="select">
-                            <select>
-                                <option>Genre</option>
-                                <option>-</option>
-                            </select>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="select">
+                                <select>
+                                    <option>Genre</option>
+                                    <option>-</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -121,7 +129,9 @@
 
         <button class="button is-normal" onclick="$('#search').submit();">Rechercher</button>
     </form>
+
     <hr>
+
     <div class="columns enquetes-infos" style="min-height:500px;">
         <div class="column is-one-fifth">
             <div class="column-header">Fonds</div>
