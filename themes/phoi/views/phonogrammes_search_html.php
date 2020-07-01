@@ -48,7 +48,7 @@
             <div class="field-body">
                 <div class="field">
                     <p class="control">
-                        <input class="input" type="text" name="search" placeholder="">
+                        <input class="input" type="text" name="search" id="keywords" placeholder="">
                     </p>
                 </div>
 
@@ -120,42 +120,45 @@
         </div>
     </div>
 
-    <button class="button is-normal" onclick="$('#search').submit();"><?php _p("Search"); ?></button>
+    <button class="button is-normal" onclick="getResultsList('list');return false;"><?php _p("Search"); ?></button>
 </form>
 </div>
 <hr/>
-<div class="container">
-    <div style="text-align: center;font-weight: 700">Résultats albums</div>
-    <div class="tabs is-toggle is-fullwidth">
-        <ul>
-            <li class="is-active">
-                <a>
-                    <span class="icon is-small" style="float:right;"><i class="fas fa-caret-down" aria-hidden="true"></i></span>
-                    <span>Titre</span>
-                </a>
-            </li>
-            <li>
-                <a>
-                    <span class="icon is-small" style="float:right;"><i class="fas fa-caret-down" aria-hidden="true"></i></span>
-                    <span>Date</span>
-                </a>
-            </li>
-            <li>
-                <a>
-                    <span class="icon is-small" style="float:right;"><i class="fas fa-caret-down" aria-hidden="true"></i></span>
-                    <span>Groupe</span>
-                </a>
-            </li>
-            <li>
-                <a>
-                    <span class="icon is-small" style="float:right;"><i class="fas fa-caret-down" aria-hidden="true"></i></span>
-                    <span>Producteur</span>
-                </a>
-            </li>
-        </ul>
+<div class="container" style="margin-bottom: 100px;">
+    <div class="views-icons">
+        <i class="mdi mdi-view-headline is-large" onclick="getResultsList('list');"></i>
+        <i class="mdi mdi-view-module is-large" onclick="getResultsList('tiles');"></i>
     </div>
-<?php
-$vn_result_size = 15;
-print $vn_result_size." résultats";
-?>
+    <div style="text-align: center;font-weight: 700">Résultats albums</div>
+    <div id="searchResults"></div>
 </div>
+
+<script>
+    var display = "list";
+    function getResultsList(disp) {
+        display = disp;
+        console.log("test");
+       let additionals = "";
+       if($("#keywords").val()) {
+           additionals = "/keywords/"+$("#keywords").val();
+       }
+       if(disp == "tiles") { additionals += "/display/tiles"; } else { additionals += "/display/list"; }
+       console.log("/index.php/Phoi/Phonogrammes/Results/country/reunion"+additionals);
+       $.get("/index.php/Phoi/Phonogrammes/Results/country/reunion"+additionals, function(data) {
+          $("#searchResults").html(data);
+          $('#search-results-list').DataTable({
+            "language": {"url": "/datatables_french.json"},
+            "searching": false,
+            "info": false,
+            "lengthChange":false
+          });
+       });
+    }
+
+    $(document).ready(function() {
+       getResultsList('list');
+    });
+</script>
+
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
