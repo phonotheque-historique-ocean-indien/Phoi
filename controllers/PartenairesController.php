@@ -82,6 +82,7 @@ La Réunion est envoûtante, multi-ethnique, authentique, sa culture se conjugue
 
         }
         $this->view->setVar("pays", $pays);
+        $this->view->setVar("country_code", $pays);
         $this->view->setVar("description", $description);
 
         $o_search = new ObjectSearch();
@@ -98,6 +99,11 @@ La Réunion est envoûtante, multi-ethnique, authentique, sa culture se conjugue
         $o_results = $o_search->search('ca_objects.grands_types:"oeuvres" AND ca_objects.pays_facet:"'.$pays.'"');
         $nb_oeuvres = $o_results->numHits();
         $this->view->setVar("nb_oeuvres", $nb_oeuvres);
+
+        $o_browse = new ObjectSearch();
+        $o_results = $o_search->search('ca_objects.grands_types:"phonogrammes" AND ca_objects.pays_facet:"'.$pays.'"');
+        $nb_phonogrammes = $o_results->numHits();
+        $this->view->setVar("nb_phonogrammes", $nb_phonogrammes);
 
         $e_browse = new EntityBrowse();
         $this->view->setVar("pays", $pays);

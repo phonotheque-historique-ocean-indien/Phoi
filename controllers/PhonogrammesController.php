@@ -2,7 +2,7 @@
 
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
-require_once(__CA_MODELS_DIR__.'/ca_site_pages.php');
+require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
 
 class PhonogrammesController extends ActionController
 {
@@ -36,7 +36,28 @@ class PhonogrammesController extends ActionController
     # -------------------------------------------------------
 
     public function Search() {
+        $country = $this->request->getParameter("country", pString);
+        $this->view->setVar("country", $country);
         $this->render('phonogrammes_search_html.php');
+    }
+
+    public function Results() {
+        $country = $this->request->getParameter("country", pString);
+        $keywords = $this->request->getParameter("keywords", pString);
+        $display = $this->request->getParameter("display", pString);
+        if($display != "tiles") $display = "list";
+        $this->view->setVar("country", $country);
+        $vs_search = 'ca_objects.grands_types:"phonogrammes" AND ca_objects.pays_facet:"'.$country.'"';
+        if($keywords) {
+            $vs_search .= " AND ".$keywords;
+        }
+        $vt_search = new ObjectSearch();
+        $vt_search_result = $vt_search->search($vs_search);
+        $nb_results = $vt_search_result->numHits();
+        $this->view->setVar("nb_results", $nb_results);
+        $this->view->setVar("results", $vt_search_result);
+
+        $this->render('phonogrammes_search_results_'.$display.'_html.php');
     }
 
 }
