@@ -1,22 +1,44 @@
 <?php
-    $country = $this->getVar("country");
+    require_once(__CA_MODELS_DIR__."/ca_objects.php");
+    $loggedin = $this->request->isLoggedIn();
+    $country = $this->getVar('country');
 ?>
 
 <div class="container">
     <!-- ca_objects_fonds_html.php -->
     <form method="get" action="/index.php/Search/objects" id="search">
-        <div style="margin: 40px 0;">
+        <div style="margin: 54px 0 40px 0;">
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                    <label class="label">Chercher</label>
+                    <label class="label"><?php _p('Chercher'); ?></label>
                 </div>
                 <div class="field-body">
                     <div class="field">
+                        <div class="field select">
+                        <select id="changeSearch">
+                            <option><?php _p('Albums'); ?></option>
+                            <option selected><?php _p('Enquêtes'); ?></option>
+                            <option><?php _p('Créations musicales'); ?></option>
+                            <option><?php _p('Interprétations'); ?></option>
+                            <option><?php _p('Partitions'); ?></option>
+                            <option><?php _p('Personnes'); ?></option>
+                            <option><?php _p('Livres'); ?></option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="field-label is-normal">
+                        <label class="label"><?php _p('Pays'); ?></label>
+                    </div>
+                    <div class="field">
                         <div class="select">
-                            <select>
-                                <option>Enquêtes</option>
-                                <option>-</option>
-                            </select>
+                            <select id="form-pays">
+    <?php 
+        $countries = ["-","Comores","Maurice","Madagascar","Mayotte","La Réunion","Rodrigues","Seychelles","Zanzibar"];
+        foreach($countries as $c) {
+            print "<option ".($c == $country ? "selected=\"selected\"": "").">".$c."</option>";
+        }
+    ?>
+                                </select>
                         </div>
                     </div>
                 </div>
@@ -24,10 +46,10 @@
 
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                    <label class="label">Plage de temps</label>
+                    <label class="label"><?php _p('Plage de temps'); ?></label>
                 </div>
                 <div class="field-body">
-                    <div style="line-height: 40px !important;padding:0 10px;">de</div>
+                    <div style="line-height: 40px !important;padding:0 10px;"><?php _p('de'); ?></div>
                     <div class="field">
                         <p class="control has-icons-right">
                             <input class="input" type="text" placeholder="jj/mm/aaaa">
@@ -36,7 +58,7 @@
                             </span>
                         </p>
                     </div>
-                    <div style="line-height: 40px !important;padding:0 10px;">à</div>
+                    <div style="line-height: 40px !important;padding:0 10px;"><?php _p('à'); ?></div>
                     <div class="field">
                         <p class="control has-icons-right">
                             <input class="input" type="text" placeholder="jj/mm/aaaa">
@@ -49,7 +71,7 @@
             </div>
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                    <label class="label">Mots-clés</label>
+                    <label class="label"><?php _p('Mots-clés'); ?></label>
                 </div>
                 <div class="field-body">
                     <div class="field">
@@ -63,7 +85,7 @@
             <div class="field-body">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
-                        <label class="label">Type de collectage</label>
+                        <label class="label"><?php _p('Type de collectage'); ?></label>
                     </div>
                     <div class="field-body">
                         <div class="field">
@@ -78,7 +100,7 @@
                 </div>
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
-                        <label class="label">Nature</label>
+                        <label class="label"><?php _p('Nature'); ?></label>
                     </div>
                     <div class="field-body">
                         <div class="field">
@@ -95,13 +117,13 @@
             <div class="field-body">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
-                        <label class="label">Type de support</label>
+                        <label class="label"><?php _p('Type de support'); ?></label>
                     </div>
                     <div class="field-body">
                         <div class="field">
                             <div class="select">
                                 <select>
-                                    <option>Type de support</option>
+                                    <option><?php _p('Type de support'); ?></option>
                                     <option>-</option>
                                 </select>
                             </div>
@@ -110,13 +132,13 @@
                 </div>
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
-                        <label class="label">Genre</label>
+                        <label class="label"><?php _p('Genre'); ?></label>
                     </div>
                     <div class="field-body">
                         <div class="field">
                             <div class="select">
                                 <select>
-                                    <option>Genre</option>
+                                    <option><?php _p('Genre'); ?></option>
                                     <option>-</option>
                                 </select>
                             </div>
@@ -127,38 +149,96 @@
         </div>
 
 
-        <button class="button is-normal" onclick="$('#search').submit();">Rechercher</button>
+        <button class="button is-normal" onclick="$('#search').submit();"><?php _p('Rechercher'); ?></button>
     </form>
 
     <hr>
 
     <div class="columns enquetes-infos" style="min-height:500px;">
         <div class="column is-one-fifth">
-            <div class="column-header">Fonds</div>
-            <div id="detail1">
-          <span class="fondsitem" onclick="loadChildren('detail2', 140);">
-          <a href="/index.php/Contribuer/Do/EditForm/table/ca_objects/type/fonds/id/140" class="pull-right" aria-label="edit">
-		    <span class="icon">
-				<i class="mdi mdi-pencil is-large"></i>
-	  		</span>
-          </a>
-              Mission patrimoine du PRMA
-          </span>
-            </div>
+            <div class="column-header"><?php _p('Fonds'); ?></div>
+<?php
+ $o_data = new Db();
+ $qr_result = $o_data->query("
+    SELECT * 
+    FROM ca_objects 
+    WHERE type_id=251 and deleted=0
+ ");
+ 
+ while($qr_result->nextRow()) {
+      $id=$qr_result->get('object_id');
+
+      $vt_object = new ca_objects($id);
+      print $vt_object->getWithTemplate('<div id="detail1">
+      <span class="fondsitem" onclick="loadChildren(\'detail2\', ^ca_objects.object_id );">
+          <a href="/index.php/Contribuer/Do/EditForm/table/ca_objects/type/fonds/id/^ca_objects.object_id" class="pull-right" aria-label="edit">
+          <span class="icon">
+              <i class="mdi mdi-pencil is-large"></i>
+            </span>
+          </a>^ca_objects.preferred_labels
+      </span>
+  </div>');
+ }
+?>
+
+            
         </div>
         <div class="column is-one-fifth">
-            <div class="column-header">Corpus</div>
+            <div class="column-header"><?php _p('Corpus'); ?></div>
             <div id="detail2"></div>
         </div>
         <div class="column is-one-fifth">
-            <div class="column-header">Enquêtes</div>
+            <div class="column-header"><?php _p('Enquêtes'); ?></div>
             <div id="detail3"></div>
         </div>
         <div class="column">
-            <div class="column-header">Collectages</div>
+            <div class="column-header"><?php _p('Collectages'); ?></div>
             <div id="detail4"></div>
         </div>
     </div>
+<?php if ($loggedin) { ?>
+    <div class="columns add-buttons" style="min-height:50px;">
+	  <div class="column is-one-fifth">
+	      <div>
+		  	&nbsp;<br/>
+
+		      <a href="/index.php/Contribuer/Do/Form/table/ca_objects/type/fonds">
+		  	<button class="button is-primary is-fullwidth"><i class="mdi mdi-plus-circle is-large "></i><?php _p('Ajouter un fonds'); ?></button>
+			</a></div>
+	  </div>
+	  <div class="column is-one-fifth">
+	      <div>
+		  	&nbsp;<br/>
+		      <a id="addcorpus" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/Corpus" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/Corpus">
+		  	<button class="button is-primary is-fullwidth"><i class="mdi mdi-plus-circle is-large"></i><?php _p('Ajouter un corpus'); ?></button>
+	      </a></div>
+	  </div>
+	    <div class="column is-one-fifth">
+	      <div>
+		  	&nbsp;<br/>
+            <a id="addenquete" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/enquete" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/enquete">
+		    <button class="button is-primary is-fullwidth"><i class="mdi mdi-plus-circle is-large"></i><?php _p('Ajouter une enquête'); ?></button>
+	      </a></div>
+	    </div>
+	    <div class="column">
+	      <div>
+		      <b><?php _p('Ajouter un collectage'); ?> </b><br/>
+		      <a class="addcollectage" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_audio" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_audio">
+		  	<button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i>audio</button>
+		      </a>
+		      <a class="addcollectage" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_photo" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_photo">
+		  	<button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i><?php _p('photo'); ?></button>
+		      </a>
+		      <a class="addcollectage" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_video" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_video">
+                <button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i><?php _p('video'); ?></button>
+		      </a>
+		      <a class="addcollectage" href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_document" data-href="/index.php/Contribuer/Do/Form/table/ca_objects/type/collectage_document">
+		  		<button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i><?php _p('documents'); ?></button>
+		      </a>
+	      </a></div>
+	    </div>
+	</div>
+<?php } ?>	
     <script>
         $('img[data-enlargable]').addClass('img-enlargable').click(function(){
             var src = $(this).attr('src');
@@ -186,11 +266,23 @@
             let next = current + 1;
             let rootname = target.slice(0, -1);
             target2 = rootname + next;
-            if(target2 == "detail3") {
+            if(target2 == 'detail3') {
+                $("#addcorpus").attr("href", $("#addcorpus").data("href")+"/parent_id/"+id);
+                $("#detail2").html("");
                 $("#detail3").html("");
                 $("#detail4").html("");
+                $("#detail5").html("");
             }
             if(target2 == "detail4") {
+                $("#addenquete").attr("href", $("#addenquete").data("href")+"/parent_id/"+id);
+                $("#detail3").html("");
+                $("#detail4").html("");
+                $("#detail5").html("");
+            }
+            if(target2 == "detail5") {
+                $(".addcollectage").each(function() {
+                    $(this).attr("href", $(this).data("href")+"/parent_id/"+id);
+                });
                 $("#detail4").html("");
             }
             console.log(target2);
@@ -371,7 +463,10 @@
         .fondscollectageitem:nth-child(2n) {
             margin-left:16px;
         }
-
+		.fondsitem .loadChildrenInfoSpan {
+			width: calc(100% - 28px);
+			display: inline-block;			
+		}
     </style>
 
 </div>
