@@ -44,14 +44,64 @@ class UsersController extends ActionController
             SELECT * 
             FROM ca_users 
         ");
-        $content="";
+        $users = [];
         while($qr_result->nextRow()) {
-            $content .= "User : ".$qr_result->get('user_name')."<br/>\n";
+            $vt_user = new ca_users($qr_result->get('user_id'));
+            $groups = implode(", ", array_map('extractUserGroups', $vt_user->getUserGroups()));
+            $users[] = [
+                "id" => $qr_result->get('user_id'),
+                "name" => $qr_result->get('user_name'),
+                "fname" => $qr_result->get('fname'),
+                "lname" => $qr_result->get('lname'),
+                "groups" => $groups,
+                "confiance" => $vt_user->getPreference('user_profile_confiance'),
+                "date" => $vt_user->getPreference('user_profile_date_creation')
+                ];
         }
-        $this->view->setVar("content", $content);
+        $this->view->setVar("users", $users);
         $this->render('users_list_html.php');
         //exit();
     }
 
+    public function Info() {
+        $id = $this->getRequest()->getParameter("id", pInteger);
+        $user = $this->getRequest()->getParameter("user", pString);
+        $o_data = new Db();
+        if($id) {
+        $qr_result = $o_data->query("
+            SELECT * 
+            FROM ca_users 
+            WHERE user_id = ".$id);
+        }  else {
+            $qr_result = $o_data->query("
+            SELECT * 
+            FROM ca_users 
+            WHERE user_name = '".$user."'");
+        }           
+        $users = [];
+        while($qr_result->nextRow()) {
+            $vt_user = new ca_users($qr_result->get('user_id'));
+            $groups = implode(", ", array_map('extractUserGroups', $vt_user->getUserGroups()));
+            $users[] = [
+                "id" => $qr_result->get('user_id'),
+                "name" => $qr_result->get('user_name'),
+                "fname" => $qr_result->get('fname'),
+                "lname" => $qr_result->get('lname'),
+                "groups" => $groups,
+                "confiance" => $vt_user->getPreference('user_profile_confiance'),
+                "date" => $vt_user->getPreference('user_profile_date_creation')
+                ];
+        }
+        $user = reset($users);
+        $this->view->setVar("user", $user);
+        $this->view->setVar("vt_user", new ca_users($user["user_id"]));
+        $current_user = $this->getRequest()->getUser();
+        $this->view->setVar("current_user", $current_user);
+        $this->render('user_info_html.php');
+    }
+}
+
+function extractUserGroups($group) {
+    return $group["name"];
 }
 ?>
