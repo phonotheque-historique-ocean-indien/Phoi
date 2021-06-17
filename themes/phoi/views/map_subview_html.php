@@ -21,12 +21,13 @@ $nb_oeuvres = $this->getVar("nb_oeuvres");
             <div class="content">
                 <ul>
                     <li><a href="/index.php/Phoi/Phonogrammes/Search/country/<?= $country_code ?>">Phonogrammes (<?= $nb_phonogrammes; ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Collectages/Search/country/<?= $country_code ?>">Objets de collectage (<?= $nb_collectages; ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Collectages/Search/country/<?= $country_code ?>">Collectages (<?= $nb_collectages; ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Partitions/Search/country/<?= $country_code ?>">Partitions (<?= $nb_autres ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Oeuvres/Search/country/<?= $country_code ?>">Créations musicales (<?= $nb_oeuvres ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Interpretations/Search/country/<?= $country_code ?>">Interprétations (<?= $nb_autres ?>)</a></li>
                     <li><a href="/index.php/Phoi/Personnes/Search/country/<?= $country_code ?>">Personnes (<?= $nb_inds ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Oeuvres/Search/country/<?= $country_code ?>">Oeuvres (<?= $nb_oeuvres ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Groupes/Search/country/<?= $country_code ?>">Groupes (<?= $nb_groups ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Autres/Search/country/<?= $country_code ?>">Livres / Articles / Photos / Autres (<?= $nb_autres ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Medias/Search/country/<?= $country_code ?>">Médias (<?= $nb_representations ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Personnes/Search/country/<?= $country_code ?>">Groupes (<?= $nb_inds ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Livres/Search/country/<?= $country_code ?>">Livres (<?= $nb_autres ?>)</a></li>
                 </ul>
             </div>
         </div>

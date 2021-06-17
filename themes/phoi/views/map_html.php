@@ -11,14 +11,15 @@
 //    }
 
 session_start();
-if($_SESSION["partie"] == "chaude" && $_GET["partie"] != "froide"):
+if ('chaude' == $_SESSION['partie'] && 'froide' != $_GET['partie']) {
     ?>
-    <h2>Les partenaires</h2>
-<?php endif; ?>
+    <h2><?php _p('Les partenaires'); ?></h2>
+<?php
+} ?>
 </div>
 <div style="position:relative;">
     <div id="map" style="height:1000px;z-index:0;"></div>
-    <div id="notes" style="position:absolute; right:50px;top:50px;height:150px;width:40%;z-index:12000;padding:20px;border-radius: 6px;">
+    <div id="notes" style="position:fixed;right:50px;top:200px;height:150px;width:40%;z-index:12000;padding:20px;border-radius: 6px;">
 
     </div>
 </div>
@@ -35,17 +36,16 @@ if($_SESSION["partie"] == "chaude" && $_GET["partie"] != "froide"):
     var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; 2012'
     });
-
-    var mapBounds = new L.LatLngBounds(
-        new L.LatLng(-43.30690941, 5.8093217),
-        new L.LatLng(20.84980396, 98.79856211)
-    );
+    var mapExtent = [-3.46044159, -45.58060417, 101.63266765, 22.90924329];
     var mapMinZoom = 1;
-    var mapMaxZoom = 10;
+    var mapMaxZoom = 9;
+    var bounds = new L.LatLngBounds(
+      new L.LatLng(mapExtent[1], mapExtent[0]),
+      new L.LatLng(mapExtent[3], mapExtent[2]));
 
     var CarteGeologiqueMarcou = L.tileLayer('/carte/{z}/{x}/{y}.png', {
         minZoom: mapMinZoom, maxZoom: mapMaxZoom,
-        bounds: mapBounds,
+        bounds: bounds,
         opacity: 0.85,
         attribution: 'Carte géologique Marcou : géoréférencement par <a href=https://www.ideesculture.com>Idéesculture 2020</a>'
     });
@@ -69,21 +69,21 @@ if($_SESSION["partie"] == "chaude" && $_GET["partie"] != "froide"):
     map.addControl(new L.Control.Layers(null, {"ESRI":Esri_WorldStreetMap, "Carte géologique Marcou":CarteGeologiqueMarcou, "Watercolor":Stamen_Watercolor}, {position:'topleft'}));
 
     L.marker([-20.8667, 55.4667]).addTo(map)
-        .bindPopup('<a id="reunionMarker" class="phoiMarker">Ile de la Réunion</a>');
+        .bindPopup('<a id="RéunionMarker" data-country="La Réunion" class="phoiMarker">La Réunion</a>');
     L.marker([-12.760910340467493, 45.1812744140625]).addTo(map)
-        .bindPopup('<a id="mayotteMarker" class="phoiMarker">Mayotte</a>');
+        .bindPopup('<a id="MayotteMarker" data-country="Mayotte" class="phoiMarker">Mayotte</a>');
     L.marker([-18.9531, 47.5207]).addTo(map)
-        .bindPopup('<a id="madagascarMarker" class="phoiMarker">Madagascar</a>');
+        .bindPopup('<a id="MadagascarMarker" data-country="Madagascar" class="phoiMarker">Madagascar</a>');
     L.marker([-6.1706, 39.3681]).addTo(map)
-        .bindPopup('<a id="zanzibarMarker" class="phoiMarker">Zanzibar</a>');
+        .bindPopup('<a id="ZanzibarMarker" data-country="Zanzibar" class="phoiMarker">Zanzibar</a>');
     L.marker([-11.7087, 43.2525]).addTo(map)
-        .bindPopup('<a id="comoresMarker" class="phoiMarker">Comores</a>');
+        .bindPopup('<a id="ComoresMarker" data-country="Comores" class="phoiMarker">Comores</a>');
     L.marker([-20.1387, 57.3767]).addTo(map)
-        .bindPopup('<a id="mauriceMarker" class="phoiMarker">Ile Maurice</a>');
+        .bindPopup('<a id="MauriceMarker" data-country="Maurice" class="phoiMarker">Maurice</a>');
     L.marker([-4.7024, 55.4494]).addTo(map)
-        .bindPopup('<a id="seychellesMarker" class="phoiMarker">Seychelles</a>');
+        .bindPopup('<a id="SeychellesMarker" data-country="Seychelles" class="phoiMarker">Seychelles</a>');
     L.marker([-19.68397023588844,63.33618164062501],{draggable:'true'}).addTo(map)
-        .bindPopup('<a id="rodriguesMarker" class="phoiMarker">Rodrigues</a>');
+        .bindPopup('<a id="RodriguesMarker" data-country="Rodrigues" class="phoiMarker">Rodrigues</a>');
 
     function onMapClick(e) {
         marker = new L.marker(e.latlng, {draggable:'true'});
@@ -101,7 +101,8 @@ if($_SESSION["partie"] == "chaude" && $_GET["partie"] != "froide"):
 
     $(document).ready(function() {
         $(document).on("click", ".phoiMarker", function() {
-            let clicked = $(this).attr("id").substr(0, $(this).attr("id").length - 6);
+            //let clicked = $(this).attr("id").substr(0, $(this).attr("id").length - 6);
+            let clicked = $(this).attr("data-country");
             let url = "/index.php/Phoi/Partenaires/GetLinks/pays/"+clicked;
             $.get(url, function(data) {
                 $("#notes").html(data);
