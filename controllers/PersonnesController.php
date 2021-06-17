@@ -3,8 +3,9 @@
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
+require_once(__CA_LIB_DIR__."/Search/EntitySearch.php");
 
-class PhonogrammesController extends ActionController
+class PersonnesController extends ActionController
 {
     # -------------------------------------------------------
     protected $opo_config;        // plugin configuration file
@@ -38,7 +39,7 @@ class PhonogrammesController extends ActionController
     public function Search() {
         $country = $this->request->getParameter("country", pString);
         $this->view->setVar("country", $country);
-        $this->render('phonogrammes_search_html.php');
+        $this->render('personnes_search_html.php');
     }
 
     public function Results() {
@@ -85,14 +86,14 @@ class PhonogrammesController extends ActionController
         }       
         $options = ["sort"=>"ca_objects.preferred_labels", "sortDirection"=>$order["dir"]];
         //$options = [];
-        $vt_search = new ObjectSearch();
+        $vt_search = new EntitySearch();
         $vt_search_result = $vt_search->search($vs_search, $options);
         $nb_results = $vt_search_result->numHits();
         $this->view->setVar("nb_results", $nb_results);
         $this->view->setVar("page", $this->request->getParameter("page", pInteger));
         $this->view->setVar("results", $vt_search_result);
 
-        $this->render('phonogrammes_search_results_'.$display.'_html.php');
+        $this->render('personnes_search_results_'.$display.'_html.php');
     }
     
     public function ResultsJson() {
@@ -120,18 +121,11 @@ class PhonogrammesController extends ActionController
         
         if($display != "tiles") $display = "list";
         $this->view->setVar("country", $country);
-        $vs_search = 'ca_objects.type_id:"878" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
-        if($pays && ($pays !="-")) $vs_search .= " AND ca_objects.pays_liste:".$pays;
+        $vs_search = 'ca_entities.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
+        if($pays && ($pays !="-")) $vs_search .= " AND ca_entities.pays_liste:".$pays;
         if($date && $date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)." -\"";
         if($date && !$date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)."\"";
         if($date_fin) $vs_search .= " AND ca_objects.date_fin:\" - ".str_replace("_","/", $date_fin)."\"";
-        if($producteur) $vs_search .= " AND ca_entities.preferred_labels.displayname/producteur:".$producteur;
-        if($groupes) $vs_search .= " AND (ca_entities.preferred_labels.displayname/interprete:\"".$groupes."\" OR ca_objects.indexation_interprete:\"".$groupes."\" )";
-        if($labels) $vs_search .= " AND ca_entities.preferred_labels.displayname/label:".$labels;
-        if($titre) $vs_search .= " AND ca_objects.preferred_labels:\"".$titre."\"";
-        if($num_catalogue) $vs_search .= " AND ca_objects.num_edition:\"".$num_catalogue."\"";
-        if($album_avec_audio) $vs_search .= " AND ca_objects.album_avec_audio:\"1\"";
-        if($album_avec_image) $vs_search .= " AND ca_objects.album_avec_image:\"1\"";
         if($tag) $vs_search .= " AND ca_objects.tag:\"".$tag."\"";
 
         if($keywords) {
@@ -141,10 +135,10 @@ class PhonogrammesController extends ActionController
         //print $vs_search; die();
         $options = [];
         if($order["column"] == 0) {
-            $options = ["sort"=>"ca_objects.preferred_labels", "sortDirection"=>$order["dir"]];
+            $options = ["sort"=>"ca_entities.preferred_labels", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 1) {
-            $options = ["sort"=>"ca_objects.date", "sortDirection"=>$order["dir"]];
+            $options = ["sort"=>"ca_entities.date", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 2) {
             $options = ["sort"=>"ca_entities.preferred_labels.surname", "sortDirection"=>$order["dir"]];
@@ -155,13 +149,13 @@ class PhonogrammesController extends ActionController
         if($order["column"] == 4) {
             $options = ["sort"=>"ca_objects.pays_liste", "sortDirection"=>$order["dir"]];
         }
-        $vt_search = new ObjectSearch();
+        $vt_search = new EntitySearch();
         $vt_search_result = $vt_search->search($vs_search, $options);
         $nb_results = $vt_search_result->numHits();
         $this->view->setVar("nb_results", $nb_results);
         $this->view->setVar("results", $vt_search_result);
 
-        print $this->render('phonogrammes_search_results_'.$display.'_json.php', false);
+        print $this->render('personnes_search_results_'.$display.'_json.php', false);
         die();
     }
 

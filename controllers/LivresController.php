@@ -4,7 +4,7 @@ ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
 
-class PhonogrammesController extends ActionController
+class LivresController extends ActionController
 {
     # -------------------------------------------------------
     protected $opo_config;        // plugin configuration file
@@ -38,7 +38,7 @@ class PhonogrammesController extends ActionController
     public function Search() {
         $country = $this->request->getParameter("country", pString);
         $this->view->setVar("country", $country);
-        $this->render('phonogrammes_search_html.php');
+        $this->render('livres_search_html.php');
     }
 
     public function Results() {
@@ -66,7 +66,7 @@ class PhonogrammesController extends ActionController
         
         if($display != "tiles") $display = "list";
         $this->view->setVar("country", $country);
-        $vs_search = 'ca_objects.type_id:"878" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
+        $vs_search = 'ca_objects.type_id:"213" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
         if($pays && ($pays !="-")) $vs_search .= " AND ca_objects.pays_liste:".$pays;
         if($date && $date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)." -\"";
         if($date && !$date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)."\"";
@@ -92,7 +92,7 @@ class PhonogrammesController extends ActionController
         $this->view->setVar("page", $this->request->getParameter("page", pInteger));
         $this->view->setVar("results", $vt_search_result);
 
-        $this->render('phonogrammes_search_results_'.$display.'_html.php');
+        $this->render('livres_search_results_'.$display.'_html.php');
     }
     
     public function ResultsJson() {
@@ -105,7 +105,8 @@ class PhonogrammesController extends ActionController
         $date_fin = $this->request->getParameter("date_fin", pString);
         $producteur = $this->request->getParameter("producteur", pString);
         $groupes = $this->request->getParameter("groupes", pString);
-        $labels = $this->request->getParameter("labels", pString);
+        $auteur = $this->request->getParameter("auteur", pString);
+        $editeur = $this->request->getParameter("editeur", pString);
         $titre = $this->request->getParameter("titre", pString);
         $num_catalogue = $this->request->getParameter("num_catalogue", pString);
         $album_avec_audio = $this->request->getParameter("album_avec_audio", pString);
@@ -120,14 +121,15 @@ class PhonogrammesController extends ActionController
         
         if($display != "tiles") $display = "list";
         $this->view->setVar("country", $country);
-        $vs_search = 'ca_objects.type_id:"878" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
+        $vs_search = 'ca_objects.type_id:"903" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
         if($pays && ($pays !="-")) $vs_search .= " AND ca_objects.pays_liste:".$pays;
         if($date && $date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)." -\"";
         if($date && !$date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)."\"";
         if($date_fin) $vs_search .= " AND ca_objects.date_fin:\" - ".str_replace("_","/", $date_fin)."\"";
         if($producteur) $vs_search .= " AND ca_entities.preferred_labels.displayname/producteur:".$producteur;
         if($groupes) $vs_search .= " AND (ca_entities.preferred_labels.displayname/interprete:\"".$groupes."\" OR ca_objects.indexation_interprete:\"".$groupes."\" )";
-        if($labels) $vs_search .= " AND ca_entities.preferred_labels.displayname/label:".$labels;
+        if($auteur) $vs_search .= " AND ca_entities.preferred_labels.displayname/auteur:".$auteur;
+        if($editeur) $vs_search .= " AND ca_entities.preferred_labels.displayname/editeur:".$editeur;
         if($titre) $vs_search .= " AND ca_objects.preferred_labels:\"".$titre."\"";
         if($num_catalogue) $vs_search .= " AND ca_objects.num_edition:\"".$num_catalogue."\"";
         if($album_avec_audio) $vs_search .= " AND ca_objects.album_avec_audio:\"1\"";
@@ -160,8 +162,8 @@ class PhonogrammesController extends ActionController
         $nb_results = $vt_search_result->numHits();
         $this->view->setVar("nb_results", $nb_results);
         $this->view->setVar("results", $vt_search_result);
-
-        print $this->render('phonogrammes_search_results_'.$display.'_json.php', false);
+        
+        print $this->render('livres_search_results_'.$display.'_json.php', false);
         die();
     }
 
