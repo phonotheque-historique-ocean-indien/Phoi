@@ -3,6 +3,9 @@
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_MODELS_DIR__.'/ca_site_pages.php');
+require_once(__CA_MODELS_DIR__.'/ca_sets.php');
+
+
 require_once(__CA_LIB_DIR__.'/Search/ObjectSearch.php');
 require_once(__CA_LIB_DIR__.'/Browse/EntityBrowse.php');
 require_once(__CA_LIB_DIR__.'/Browse/ObjectRepresentationBrowse.php');
@@ -39,6 +42,14 @@ class MonEspaceController extends ActionController
 
     public function Index() {
         $user = $this->getRequest()->getUser();
+
+        $t_sets = new ca_sets();
+        $sets = $t_sets->getSetsForUser(array("table" => "ca_objects", "user_id" => $user->getUserID(), "parents_only" => true));
+        foreach ($sets as $set){
+            $t_set = new ca_sets($set["set_id"]);
+            $allSets[$set["set_id"]] = $t_set->getWithTemplate("^ca_sets.preferred_labels");
+        }
+        $this->view->setVar("sets", $allSets);
         $this->view->setVar("user", $user);
         $this->render('monespace_index_html.php');
     }

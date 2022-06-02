@@ -107,7 +107,9 @@ class ModerationController extends ActionController
             if(!$contrib["_user_id"]) $contrib["_user_id"] = 1;
             $timecode = $filename;
             $vt_user = new ca_users($user_id);
+            $contrib["filename"] = $filename;
             $modifications[] = $contrib;
+
         }
         $this->view->setVar("modifications", $modifications);
 

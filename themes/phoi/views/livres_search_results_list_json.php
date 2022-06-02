@@ -16,12 +16,14 @@ if (!$start) {
 }
 if($force_start) $start=$force_start;
 
-$template1 = '<unit restrictToRelationshipTypes="auteur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit>';
+$template1 = '<unit restrictToRelationshipTypes="auteur" relativeTo="ca_entities" delimiter=", ">^ca_entities.preferred_labels.displayname</unit>';
 $template2 = '<l>^ca_objects.preferred_labels.name</l>';
 //$template1 = '^ca_objects.preferred_labels.name';
 $template3 = '^ca_objects.date';
-$template4 = '^ca_objects.lieux <unit restrictToRelationshipTypes="editeur" relativeTo="ca_entities">: ^ca_entities.preferred_labels.displayname</unit>';
+$template4 = '^ca_objects.lieux ';
 $template5 = '^ca_objects.pays_liste';
+$template6 = '<unit restrictToRelationshipTypes="editeur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit>';
+
 $i = 0;
 $json_data = [];
 while ($qr_results->nextHit()) {
@@ -48,6 +50,7 @@ while ($qr_results->nextHit()) {
         $template1,
         ['checkAccess' => [0 => 1]]
     );
+   
     $record2 = $vt_object->getWithTemplate(
         $template2,
         ['checkAccess' => [0 => 1]]
@@ -67,12 +70,17 @@ while ($qr_results->nextHit()) {
         $template5,
         ['checkAccess' => [0 => 1]]
     );
+    $record6 = $vt_object->getWithTemplate(
+        $template6,
+        ['checkAccess' => [0 => 1]]
+    );
 
     $record1 = str_replace('!!ICONURL!!', $vt_rep_url, $record1);
     $record2 = str_replace('!!ICONURL!!', $vt_rep_url, $record2);
     $record3 = str_replace('!!ICONURL!!', $vt_rep_url, $record3);
     $record4 = str_replace('!!ICONURL!!', $vt_rep_url, $record4);
     $record5 = str_replace('!!ICONURL!!', $vt_rep_url, $record5);
+    $record6 = str_replace('!!ICONURL!!', $vt_rep_url, $record6);
 
     if ($vt_object->get('ca_objects.date')) {
         $date = $vt_object->get('ca_objects.date');
@@ -82,12 +90,11 @@ while ($qr_results->nextHit()) {
     } else {
         $date = '';
     }
-    $record2 = str_replace('!!DATE!!', $date, $record2);
-    $json_data[] = ['Auteur' => $record1, 'Titre' => $record2, 'Année' => $record3, "Edition" => $record4, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays (thématique)' => $record5];
+    $record3 = str_replace('!!DATE!!', $date, $record3);
+    $json_data[] = [ 'Titre' => $record2, 'Auteur' => $record1, 'Année' => $record3, "Edition" => $record4, "Éditeur" => $record6, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays' => $record5];
 }
 
 header('Content-Type: application/json');
-
 echo '{ 
     "draw": '.$draw.',
     "recordsTotal": '.$nb_results.',

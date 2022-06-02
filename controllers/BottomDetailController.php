@@ -42,13 +42,13 @@ class BottomDetailController extends ActionController
         $qr_mostDisplayed = $o_data->query('
             SELECT ca_objects.object_id 
             FROM ca_objects LEFT JOIN ca_objects_x_object_representations ON ca_objects_x_object_representations.object_id=ca_objects.object_id
-            WHERE deleted=0 AND access=1 AND type_id IN (26, 27, 849, 251) AND representation_id is not null GROUP BY ca_objects.object_id  ORDER BY view_count, rand() DESC LIMIT 12
+            WHERE deleted=0 AND access=1 AND type_id IN (26, 849, 251, 878) AND representation_id is not null GROUP BY ca_objects.object_id  ORDER BY view_count, rand() DESC LIMIT 12
         ');
         $this->view->setVar('mostDisplayed', $qr_mostDisplayed);
         $qr_random = $o_data->query('
             SELECT ca_objects.object_id 
             FROM ca_objects LEFT JOIN ca_objects_x_object_representations ON ca_objects_x_object_representations.object_id=ca_objects.object_id
-            WHERE deleted=0 AND access=1 AND type_id IN (26, 27, 849, 251) AND representation_id is not null GROUP BY ca_objects.object_id  ORDER BY rand() DESC LIMIT 12
+            WHERE deleted=0 AND access=1 AND type_id IN (26, 849, 251, 878) AND representation_id is not null GROUP BY ca_objects.object_id  ORDER BY rand() DESC LIMIT 12
         ');
         $this->view->setVar('random', $qr_random);
         echo $this->render('bottom_detail_html.php', true);

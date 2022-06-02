@@ -21,13 +21,14 @@ foreach($modifications as $modification):
     <tr>
         <td><?php
 	        $type = ( $modification["_table"] == "ca_entities" ? "entities" : "objects");
-            print "<a href='/index.php/Detail/$type/".$modification["_id"]."'>".$modification["_type"]." : ".$modification["title"]."</a>"
+            $title = mb_strimwidth($modification["title"], 0, 80, '...');
+            print "<a class='button is-primary' style='white-space:normal;text-align: left;' href='/index.php/Contribuer/Do/ModerateModification/modification/".$modification["filename"]."'>".$modification["_type"]." : ".$title."</a>"
             ?></td>
 
         <td><?= date('d/m/Y H:i:s', $modification["_timecode"]); ?></td>
         <td><?php
             $vt_user = new ca_users($modification["_user_id"]);
-            print "<a href='/index.php/Phoi/Users/Info/id/".$modification["_user_id"]."'>".$vt_user->get("fname")." ".$vt_user->get("lname")."</a>";
+            print "<a href='/index.php/Phoi/Users/Info/id/".$modification["_user_id"]."'>".$vt_user->get("user_name")."</a>";
 
         ?></td>
         <td><?php _p("Modification"); ?></td>
@@ -42,7 +43,8 @@ foreach($modifications as $modification):
     $(document).ready( function () {
         $('#log_list').DataTable({
             "language": {"url": "/datatables_french.json"},
-            "info": false
+            "info": false,
+            "order": [[1, "desc"]]
         });
     } );
 </script>

@@ -3,6 +3,7 @@
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
+require_once(__CA_APP_DIR__."/plugins/Phoi/helpers/phonetique_objects.php");
 
 class InterpretationsController extends ActionController
 {
@@ -110,6 +111,7 @@ class InterpretationsController extends ActionController
         $num_catalogue = $this->request->getParameter("num_catalogue", pString);
         $album_avec_audio = $this->request->getParameter("album_avec_audio", pString);
         $album_avec_image = $this->request->getParameter("album_avec_image", pString);
+        $phonetique = (bool) $this->request->getParameter("phonetique", pString);
 
         $order = $_GET["order"];
         if(!isset($_GET["order"][0])) {
@@ -137,6 +139,20 @@ class InterpretationsController extends ActionController
         if($keywords) {
             $vs_search .= " AND ".$keywords;
         }        
+
+        if($phonetique) {
+            // 874 => Interprétations
+            print phoneticSearch(50, $titre, 874);
+            print "\n\n\n\n\n\n\n\n\n";
+            die();
+        } else {
+            // Normal search
+            if($titre) {
+                foreach(explode(" ",$titre) as $titre_u) {
+                    $vs_search .= " AND ca_objects.preferred_labels:".$titre_u."";
+               }        
+            }
+        }
 
         //print $vs_search; die();
         $options = [];

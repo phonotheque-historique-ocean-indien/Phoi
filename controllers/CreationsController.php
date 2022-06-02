@@ -3,6 +3,7 @@
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
+require_once(__CA_APP_DIR__."/plugins/Phoi/helpers/phonetique_objects.php");
 
 class CreationsController extends ActionController
 {
@@ -110,6 +111,7 @@ class CreationsController extends ActionController
         $num_catalogue = $this->request->getParameter("num_catalogue", pString);
         $album_avec_audio = $this->request->getParameter("album_avec_audio", pString);
         $album_avec_image = $this->request->getParameter("album_avec_image", pString);
+        $phonetique = (bool) $this->request->getParameter("phonetique", pString);
 
         $order = $_GET["order"];
         if(!isset($_GET["order"][0])) {
@@ -120,7 +122,7 @@ class CreationsController extends ActionController
         
         if($display != "tiles") $display = "list";
         $this->view->setVar("country", $country);
-        $vs_search = 'ca_objects.type_id:"213" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
+        $vs_search = 'ca_objects.type_id:"849" AND ca_objects.deleted:0';/* AND ca_objects.pays_facet:"'.$country.'"';*/
         if($pays && ($pays !="-")) $vs_search .= " AND ca_objects.pays_liste:".$pays;
         if($date && $date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)." -\"";
         if($date && !$date_fin) $vs_search .= " AND ca_objects.date:\"".str_replace("_","/", $date)."\"";
@@ -137,6 +139,20 @@ class CreationsController extends ActionController
         if($keywords) {
             $vs_search .= " AND ".$keywords;
         }        
+
+        if($phonetique) {
+            // 849 => créations
+            print phoneticSearch(50, $titre, 849);
+            print "\n\n\n\n\n\n\n\n\n";
+            die();
+        } else {
+            // Normal search
+            if($titre) {
+                foreach(explode(" ",$titre) as $titre_u) {
+                    $vs_search .= " AND ca_objects.preferred_labels:".$titre_u."";
+               }        
+            }
+        }
 
         //print $vs_search; die();
         $options = [];

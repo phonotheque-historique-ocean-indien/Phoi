@@ -4,6 +4,7 @@ ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_MODELS_DIR__.'/ca_site_pages.php');
 require_once(__CA_LIB_DIR__.'/Search/ObjectSearch.php');
+require_once(__CA_LIB_DIR__.'/Search/EntitySearch.php');
 require_once(__CA_LIB_DIR__.'/Browse/EntityBrowse.php');
 require_once(__CA_LIB_DIR__.'/Browse/ObjectRepresentationBrowse.php');
 
@@ -110,20 +111,14 @@ La Réunion est envoûtante, multi-ethnique, authentique, sa culture se conjugue
         $nb_phonogrammes = $o_results->numHits();
         $this->view->setVar("nb_phonogrammes", $nb_phonogrammes);
 
-        $e_browse = new EntityBrowse();
-        $this->view->setVar("pays", $pays);
-        //$e_browse->addCriteria("pays_facet", $facet_id);
-        $e_browse->addCriteria("type_facet", 89);
-        $e_browse->execute();
-        $nb_entities = $e_browse->numResults();
-        $this->view->setVar("nb_inds", $nb_entities);
+        $e_search = new EntitySearch();
+        $e_results = $e_search->search('ca_entities.type_id:89 AND ca_entities.deleted:0 AND ca_entities.pays_liste:"'.$pays.'"');
+        $nb_inds = $e_results->numHits();
+        $this->view->setVar("nb_inds", $nb_inds);
 
-        $e_browse = new EntityBrowse();
-        $this->view->setVar("pays", $pays);
-        //$e_browse->addCriteria("pays_facet", $facet_id);
-        $e_browse->addCriteria("type_facet", 220);
-        $e_browse->execute();
-        $nb_groups = $e_browse->numResults();
+        $e_search2 = new EntitySearch();
+        $e_results2 = $e_search2->search('ca_entities.type_id:220 AND ca_entities.deleted:0 AND ca_entities.pays_liste:"'.$pays.'"');
+        $nb_groups = $e_results2->numHits();
         $this->view->setVar("nb_groups", $nb_groups);
 
         $or_browse = new ObjectRepresentationBrowse();

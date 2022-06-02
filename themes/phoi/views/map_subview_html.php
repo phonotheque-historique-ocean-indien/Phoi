@@ -26,7 +26,7 @@ $nb_oeuvres = $this->getVar("nb_oeuvres");
                     <li><a href="/index.php/Phoi/Oeuvres/Search/country/<?= $country_code ?>">Créations musicales (<?= $nb_oeuvres ?>)</a></li>
                     <li><a href="/index.php/Phoi/Interpretations/Search/country/<?= $country_code ?>">Interprétations (<?= $nb_autres ?>)</a></li>
                     <li><a href="/index.php/Phoi/Personnes/Search/country/<?= $country_code ?>">Personnes (<?= $nb_inds ?>)</a></li>
-                    <li><a href="/index.php/Phoi/Personnes/Search/country/<?= $country_code ?>">Groupes (<?= $nb_inds ?>)</a></li>
+                    <li><a href="/index.php/Phoi/Groupes/Search/country/<?= $country_code ?>">Groupes (<?= $nb_groups ?>)</a></li>
                     <li><a href="/index.php/Phoi/Livres/Search/country/<?= $country_code ?>">Livres (<?= $nb_autres ?>)</a></li>
                 </ul>
             </div>

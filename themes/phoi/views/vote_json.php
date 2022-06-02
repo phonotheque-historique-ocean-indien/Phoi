@@ -20,7 +20,7 @@ $medias = $this->getVar("medias");
 <?php
 foreach($modifications as $key=>$modification):
     //var_dump($modification);die();
-    //https://dev.phoi.io/index.php/Contribuer/Do/Moderate/contribution/1600082182.json
+    //https://www.phoi.io/index.php/Contribuer/Do/Moderate/contribution/1600082182.json
 ?>
     <tr>
         <td><?php

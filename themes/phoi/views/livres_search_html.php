@@ -1,6 +1,12 @@
 <?php
     $loggedin = $this->request->isLoggedIn();
+// sanitize page name for browse tab
+$browser_tab_label = "PHOI - Livres";
 ?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Livres/Search");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
@@ -146,6 +152,26 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                     <p class="control">
                         <input class="input" type="text" name="title" id="form-titre" placeholder="">
                     </p>
+                    <?php                    
+
+//$user = $this->request->getUser();
+//if(($user->getUserId() == 1) || ($user->getUserId() == 2)):
+?>
+                <p class="control">
+                    <div class="field-body" style="align-items:center">
+                        <label class="checkbox" style="padding-left:4px;">
+                            <input type="checkbox" id="form-titre-phonetique" style="margin-top:4px;">
+                        </label>&nbsp;
+                        <div class="is-normal">
+                            <label class="label">Recherche phonétique</label>
+                        </div>
+                        
+                    </div>
+                </p>
+<?php
+//endif;
+
+?>                            
                 </div>
 
             </div>
@@ -221,9 +247,10 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
     <table id="search-results-list">
 	    <thead>
 		  <tr>
-		    <th>Auteur</th>
 		    <th>Titre</th>
+            <th>Auteur</th>
 		    <th>Lieu d'édition</th>
+            <th>Éditeur</th>
 		    <th>Année</th>
 		    <th>Pays (thématique)</th>
 		  </tr>
@@ -253,7 +280,11 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
            additionals = additionals+"/titre/"+$("#form-titre").val();
            console.log(additionals);
        	}           
-           if($("#form-auteur").val()) {
+        if($("#form-titre-phonetique").is(":checked")) {
+           additionals = additionals+"/phonetique/1";
+           console.log(additionals);
+       	}
+        if($("#form-auteur").val()) {
            additionals = additionals+"/auteur/"+$("#form-auteur").val();
            console.log(additionals);
        	}           
@@ -333,11 +364,12 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 		            "searching": false,
 		            "info": false,
 					"columns": [
-			            { "data": "Auteur" },
 			            { "data": "Titre" },
+                        { "data": "Auteur" },
 			            { "data": "Edition" },
+                        { "data": "Éditeur" },
 			            { "data": "Année" },
-			            { "data": "Pays (thématique)" },        
+			            { "data": "Pays" },        
 			        ]
 		          });
                   
@@ -348,8 +380,23 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
     }
 
     $(document).ready(function() {
-       console.log("getResultsList");
-       getResultsList('list');
+        console.log("getResultsList");
+        getResultsList('list');
+
+        $("#form-titre-phonetique").click(function() {
+            window.phonetique = !window.phonetique;
+            if(window.phonetique) {
+                $("input").attr("disabled", "disabled");
+                $("select").attr("disabled", "disabled");
+                $("tags").attr("disabled", "disabled");
+                $("#form-titre").removeAttr("disabled");
+                $("#form-titre-phonetique").removeAttr("disabled");
+            } else {
+                $("input").removeAttr("disabled");
+                $("tags").removeAttr("disabled");
+                $("select").removeAttr("disabled");
+            }
+        })
     });
 </script>
 

@@ -22,6 +22,8 @@ $template2 = '^ca_objects.date';
 $template3 = '<unit relativeTo="ca_objects"><unit restrictToRelationshipTypes="auteur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit></unit>';
 $template4 = '<unit relativeTo="ca_objects"><unit restrictToRelationshipTypes="compositeur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit></unit>';
 $template5 = '<unit relativeTo="ca_objects"><unit restrictToRelationshipTypes="editeur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit></unit>';
+$template6 = '<unit relativeTo="ca_objects" resctritToTypes="Partition"><l>^ca_objects.preferred_labels</l></unit>';
+
 $i = 0;
 $json_data = [];
 while ($qr_results->nextHit()) {
@@ -70,11 +72,16 @@ while ($qr_results->nextHit()) {
         $template5,
         ['checkAccess' => [0 => 1]]
     );
+    $record6 = $vt_object->getWithTemplate(
+        $template6,
+        ['checkAccess' => [0 => 1]]
+    );
     $record1 = str_replace('!!ICONURL!!', $vt_rep_url, $record1);
     $record2 = str_replace('!!ICONURL!!', $vt_rep_url, $record2);
     $record3 = str_replace('!!ICONURL!!', $vt_rep_url, $record3);
     $record4 = str_replace('!!ICONURL!!', $vt_rep_url, $record4);
     $record5 = str_replace('!!ICONURL!!', $vt_rep_url, $record5);
+    $record6 = str_replace('!!ICONURL!!', $vt_rep_url, $record6);
 
     if ($vt_object->get('ca_objects.date')) {
         $date = $vt_object->get('ca_objects.date');
@@ -85,7 +92,7 @@ while ($qr_results->nextHit()) {
         $date = '';
     }
     $record2 = str_replace('!!DATE!!', $date, $record2);
-    $json_data[] = ['Titre' => $record1, 'Date' => $record2, 'Auteur' => $record3, 'Compositeur' => $record4, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays' => $vt_object->getWithTemplate('^ca_objects.pays_liste'), 'Editeur' => $record5];
+    $json_data[] = ['Titre' => $record1, 'Auteur' => $record3, 'Compositeur' => $record4, 'Date' => $record2, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays' => $vt_object->getWithTemplate('^ca_objects.pays_liste'), 'Éditeur' => $record5, 'Partition' => $record6];
 }
 
 header('Content-Type: application/json');

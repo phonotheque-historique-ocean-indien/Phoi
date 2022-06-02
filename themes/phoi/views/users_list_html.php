@@ -1,6 +1,13 @@
 <?php
 $users = $this->getVar("users");
+//var_dump($users);die();
+// sanitize page name for browse tab
+$browser_tab_label = "PHOI - Utilisateurs";
 ?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Users/List");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
 <h2><?php _p("Utilisateurs"); ?></h2>
 <table id="userslist">
         <thead>
@@ -16,9 +23,10 @@ $users = $this->getVar("users");
         </thead>
 <?php
 foreach($users as $user):
+    $user_slug = str_replace(["@","/","."],"_", $user["name"]);
 ?>
     <tr>
-        <td><i class="mdi mdi-information is-large tooltip" data-tooltip-content="#tooltip_content_<?= $user["name"]; ?>"></i></td>
+        <td><i class="mdi mdi-information is-large tooltip" data-tooltip-content="#tooltip_content_<?= $user_slug ?>"></i></td>
         <td><?= $user["name"]; ?></td>
         <td><?= $user["fname"]; ?></td>
         <td><?= $user["lname"]; ?></td>
@@ -32,34 +40,28 @@ foreach($users as $user):
 <div class="tooltip_templates" style="display: none">
 <?php
 foreach($users as $user):
+    $user_slug = str_replace(["@","/","."],"_", $user["name"]);
 ?>
-    <span id="tooltip_content_<?= $user["name"] ?>">
+    <span id="tooltip_content_<?= $user_slug ?>">
         <?php
         $vt_user = new ca_users($user["id"]);
         $picture = $vt_user->getPreference("user_profile_image");
+        $picture = str_replace(__CA_BASE_DIR__, "", $picture);
+
         if(!$picture) $picture="/user_icon.png";
-        print "<img class='profile-image' src='".$picture."'>";
+        print "<p style='text-align:center'><img class='profile-image' src='".$picture."'></p>";
         ?><br/>
 
         <p style="text-align: center;font-size:24px;"><b><?= $user["fname"]; ?> <?= $user["lname"]; ?></b><br/>
         <i><?= $user["name"]; ?></i></p>
         <hr/>
         Droits : <?php print ($user["groups"] ? $user["groups"] : "<i>Utilisateur</i>"); ?><br/>
-        Note de confiance : <?= $user["confiance"]; ?> %<br/>
         Membre depuis : <?= $user["date"]; ?><br/>
     </span>
 <?php endforeach; ?>
 </div>
 <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
 <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready( function () {
-        $('#userslist').DataTable({
-            "language": {"url": "/datatables_french.json"},
-            "info": false
-        });
-    } );
-</script>
 <div style="height:80px;"></div>
 
 <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
@@ -108,22 +110,28 @@ foreach($users as $user):
     .profile-image {
         max-height: 120px;
         display:inline-block;
-        float:right;
     }
 </style>
 
+
 <script>
-    $(document).ready(function() {
-        $('.tooltip').tooltipster({
-            trigger: 'click',
-            maxWidth: 400,
-            minWidth: 300,
-            side: 'right',
-            functionPosition: function(instance, helper, position){
-                position.size.height += 30;
-                position.size.width += 60;
-                return position;
+    $(document).ready( function () {
+        $('#userslist').DataTable({
+            "language": {"url": "/datatables_french.json"},
+            "info": false,
+            "drawCallback": function( settings ) {
+                $('.tooltip').tooltipster({
+                    trigger: 'click',
+                    maxWidth: 400,
+                    minWidth: 300,
+                    side: 'right',
+                    functionPosition: function(instance, helper, position){
+                        position.size.height += 30;
+                        position.size.width += 60;
+                        return position;
+                    }
+                });
             }
         });
-    });
+    } );
 </script>

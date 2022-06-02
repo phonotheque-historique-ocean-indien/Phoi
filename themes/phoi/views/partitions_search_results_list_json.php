@@ -21,6 +21,8 @@ $template1 = '<img class="list-icon" src="!!ICONURL!!"> <l><ifdef code="ca_objec
 $template2 = '^ca_objects.date';
 $template3 = '<unit restrictToRelationshipTypes="auteur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit>';
 $template4 = '<unit restrictToRelationshipTypes="compositeur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit>';
+$template5 = '<unit restrictToRelationshipTypes="editeur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit>';
+
 $i = 0;
 $json_data = [];
 while ($qr_results->nextHit()) {
@@ -65,10 +67,15 @@ while ($qr_results->nextHit()) {
         $template4,
         ['checkAccess' => [0 => 1]]
     );
+    $record5 = $vt_object->getWithTemplate(
+        $template5,
+        ['checkAccess' => [0 => 1]]
+    );
     $record1 = str_replace('!!ICONURL!!', $vt_rep_url, $record1);
     $record2 = str_replace('!!ICONURL!!', $vt_rep_url, $record2);
     $record3 = str_replace('!!ICONURL!!', $vt_rep_url, $record3);
     $record4 = str_replace('!!ICONURL!!', $vt_rep_url, $record4);
+    $record5 = str_replace('!!ICONURL!!', $vt_rep_url, $record5);
 
     if ($vt_object->get('ca_objects.date')) {
         $date = $vt_object->get('ca_objects.date');
@@ -79,7 +86,7 @@ while ($qr_results->nextHit()) {
         $date = '';
     }
     $record2 = str_replace('!!DATE!!', $date, $record2);
-    $json_data[] = ['Titre' => $record1, 'Date' => $record2, 'Auteur' => $record3, 'Compositeur' => $record4, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays' => $vt_object->getWithTemplate('^ca_objects.pays_liste')];
+    $json_data[] = ['Titre' => $record1, 'Date' => $record2, 'Auteur' => $record3, 'Compositeur' => $record4, 'Type' => $vt_object->get('ca_objects.type_id'), 'Pays' => $vt_object->getWithTemplate('^ca_objects.pays_liste'), "Éditeur" => $record5];
 }
 
 header('Content-Type: application/json');

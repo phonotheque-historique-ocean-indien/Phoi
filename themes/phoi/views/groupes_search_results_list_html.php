@@ -1,27 +1,21 @@
 <?php
     $qr_results = $this->getVar('results');
     $nb_results = $this->getVar('nb_results');
-    $vs_search = $this->getVar('vs_search');
-    //var_dump($vs_search);die();
 ?>
 
 <table class="table is-fullwidth" id="search-results-list">
 <thead>
   <tr>
-    <th>Titre</th>
-    <th>Date</th>
-    <th>Groupe</th>
-    <th>Producteur</th>
+    <th>Nom</th>
+    <th>Pays</th>
   </tr>
 </thead>
 <tbody>
 <?php
 $template = '
 <tr>
-    <td><img class="list-icon" src="^ca_object_representations.media.icon.url"> <l>^ca_objects.preferred_labels.name</l></td>
-    <td>!!DATE!!</td>
-    <td><unit restrictToRelationshipTypes="interprete" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit></td>
-    <td><unit restrictToRelationshipTypes="producteur" relativeTo="ca_entities">^ca_entities.preferred_labels.displayname</unit></td>
+    <td><l>^ca_entities.preferred_labels.displayname</l></td>
+    <td>^ca_entities.pays_liste</td>
 </tr>
 ';
 $i = 0;

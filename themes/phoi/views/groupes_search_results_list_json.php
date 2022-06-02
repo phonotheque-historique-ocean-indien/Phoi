@@ -16,12 +16,10 @@ if (!$start) {
 }
 if($force_start) $start=$force_start;
 
-$template1 = '<l>^ca_entities.preferred_labels.surname</l>';
-$template2 = '^ca_entities.preferred_labels.forename';
+$template1 = '<l>^ca_entities.preferred_labels</l> <ifdef code="ca_entities.related.preferred_labels"><small><i>(<unit relativeTo="ca_entities.related" delimiter=", ">^ca_entities.preferred_labels</unit></i></small>)</ifdef>';
+$template2 = '';
 $template3 = '';
-$template4 = '';
 
-//$template1 = '^ca_objects.preferred_labels.name';
 $i = 0;
 $json_data = [];
 while ($qr_results->nextHit()) {
@@ -33,9 +31,7 @@ while ($qr_results->nextHit()) {
         break;
     }
     $vt_item = new ca_entities($qr_results->get('ca_entities.entity_id'), ['checkAccess' => [0 => 1]]);
-
     $record1 = 
-    // $qr_results->get("object_id").
     $vt_item->getWithTemplate(
         $template1,
         ['checkAccess' => [0 => 1]]
@@ -52,16 +48,8 @@ while ($qr_results->nextHit()) {
     if ($test) {
         $record3 = $matches[0][0];
     }
-    $record4 = $vt_item->getWithTemplate(
-        $template4,
-        ['checkAccess' => [0 => 1]]
-    );
-    $test = preg_match_all('/[0-9][0-9][0-9][0-9]/', $record4, $matches);
-    if ($test) {
-        $record4 = $matches[0][0];
-    }
     // Ignore blank titles on display
-    $json_data[] = ['Nom' => $record1, "Prénom" => $record2, "Naissance" => "", "Décès" =>"", 'Pays' => $vt_item->getWithTemplate('^ca_entities.pays_liste')];
+    $json_data[] = ['Nom' => $record1, "Date de début" => $record2, "Date de fin" => $record2,  'Pays' => $vt_item->getWithTemplate('^ca_entities.pays_liste')];
 }
 
 header('Content-Type: application/json');

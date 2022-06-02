@@ -4,6 +4,14 @@ $logs = $this->getVar("logs");
 $vt_user = $this->request->getUser();
 $roles = $vt_user->getUserGroups();
 
+// sanitize page name for browse tab
+$browser_tab_label = "PHOI - Contributions";
+?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Moderation/List");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
+<?php
 $is_admin = false;
 $is_moderator = false;
 foreach($roles as $role) {
@@ -13,9 +21,12 @@ foreach($roles as $role) {
 		$is_moderator = true;
 		$is_admin = true; }
 }
+$is_logged_in = $this->request->isLoggedIn();
 ?>
 <p style="text-align: right;padding-top:8px;">
+<?php if($is_logged_in): ?>
     <span class="tag is-warning"><a href="/index.php/Phoi/Vote/List" style="color:black;font-weight:bold;">Voter</a></span>
+<?php endif; ?>
 	<?php if($is_admin) print '<span class="tag is-light">Administrateur</span>'; ?>
 		<?php if($is_moderator) print '<span class="tag is-light">Modérateur</span>'; ?>
 </p>
@@ -56,8 +67,8 @@ foreach($logs as $log):
         <?php
             $vt_user = new ca_users($log["user_id"]);
         ?>
-        <a href="https://dev.phoi.io/index.php/Phoi/Users/Info/id/<?= $vt_user->get("user_id") ?>"><?php
-            print $vt_user->get("fname")." ".$vt_user->get("lname");
+        <a href="https://www.phoi.io/index.php/Phoi/Users/Info/id/<?= $vt_user->get("user_id") ?>"><?php
+            print $vt_user->get("user_name");
         ?></a></td>
         <td><?php
             switch($log["changetype"]) {

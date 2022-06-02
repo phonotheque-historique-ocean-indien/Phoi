@@ -55,10 +55,28 @@ class MediaController extends ActionController
         $this->view->setVar("user", $this->getRequest()->getUser());
         $file = reset($_FILES);
         $t_object->setMode(ACCESS_WRITE);
-        $id = $t_object->addRepresentation($file["tmp_name"], 140, 6, 1, 1, 1, null, array('preferred_labels'=>$file["name"], 'original_filename' => $file["name"]));
+        $repr = $t_object->addRepresentation(
+            $file["tmp_name"], 
+            140, 
+            6, 
+            1, 
+            1, 
+            1, 
+            null,
+            [
+                'returnRepresentation'=>true,
+                'original_filename' => $file["name"]
+            ]
+        );
         $t_object->update();
-        var_dump($id);
-
+        //$repr = new ca_object_representations();
+        $repr->setMode(ACCESS_WRITE);
+        $repr->removeAllLabels(__CA_LABEL_TYPE_ANY__);
+        $repr->update();
+        $repr->addLabel(["name"=>$file["name"]], 2, null, true);
+        $repr->set("idno", $file["name"]);
+        $repr->update();
+        var_dump($repr->getPrimaryKey());
         //print $this->render('media_index_html.php');
         exit();
     }

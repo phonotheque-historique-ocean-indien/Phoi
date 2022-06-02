@@ -1,6 +1,12 @@
 <?php
     $loggedin = $this->request->isLoggedIn();
+// sanitize page name for browse tab
+$browser_tab_label = "PHOI - Créations";
 ?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Creations/Search");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
@@ -146,6 +152,25 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                     <p class="control">
                         <input class="input" type="text" name="title" id="form-titre" placeholder="">
                     </p>
+                    <?php                    
+//$user = $this->request->getUser();
+//if(($user->getUserId() == 1) || ($user->getUserId() == 2)):
+?>
+                <p class="control">
+                    <div class="field-body" style="align-items:center">
+                        <label class="checkbox" style="padding-left:4px;">
+                            <input type="checkbox" id="form-titre-phonetique" style="margin-top:4px;">
+                        </label>&nbsp;
+                        <div class="is-normal">
+                            <label class="label">Recherche phonétique</label>
+                        </div>
+                        
+                    </div>
+                </p>
+<?php
+//endif;
+?>                    
+
                 </div>
 
             </div>
@@ -189,7 +214,13 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
             <label class="checkbox" style="padding-left:4px;">
                 <input type="checkbox" id="form-avec_item"  style="margin-top:4px;"/>
             </label>
-            
+            &nbsp;&nbsp;&nbsp;
+            <div class="is-normal">
+                <label class="label"><?php _p('Avec notice descriptive'); ?></label>
+            </div>
+            <label class="checkbox" style="padding-left:4px;">
+                <input type="checkbox" id="form-avec_notice_descriptive"  style="margin-top:4px;"/>
+            </label>
             </div>
         </div>
 
@@ -241,10 +272,11 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 	    <thead>
 		  <tr>
 		    <th>Titre</th>
-		    <th>Date</th>
 		    <th>Auteur</th>
 		    <th>Compositeur</th>
-		    <th>Editeur</th>
+            <th>Date</th>
+		    <th>Éditeur</th>
+            <th>Partition</th>
 		  </tr>
 		</thead>
 		<tbody>
@@ -307,7 +339,11 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
         if($("#form-album_avec_image").is(":checked")) {
            additionals = additionals+"/album_avec_image/1";
            console.log(additionals);
-       	}                      
+       	}
+        if($("#form-titre-phonetique").is(":checked")) {
+           additionals = additionals+"/phonetique/1";
+           console.log(additionals);
+       	}
        	console.log(additionals);
 	   	if(disp == "tiles") { 
 	       	additionals += "/display/tiles"; 
@@ -345,10 +381,11 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 		            "info": false,
 					"columns": [
 			            { "data": "Titre" },
-			            { "data": "Date" },
 			            { "data": "Auteur" },
 			            { "data": "Compositeur" },
-			            { "data": "Editeur" }  
+                        { "data": "Date" },
+			            { "data": "Éditeur" },
+                        { "data": "Partition" }  
 			        ]
 		          });
                   
@@ -361,6 +398,19 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
     $(document).ready(function() {
        console.log("getResultsList");
        getResultsList('list');
+
+       $("#form-titre-phonetique").click(function() {
+            window.phonetique = !window.phonetique;
+            if(window.phonetique) {
+                $("input").attr("disabled", "disabled");
+                $("select").attr("disabled", "disabled");
+                $("#form-titre").removeAttr("disabled");
+                $("#form-titre-phonetique").removeAttr("disabled");
+            } else {
+                $("input").removeAttr("disabled");
+                $("select").removeAttr("disabled");
+            }
+        })
     });
 </script>
 

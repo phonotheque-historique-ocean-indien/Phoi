@@ -3,6 +3,7 @@
 ini_set("display_errors", 1);
 error_reporting(E_ERROR);
 require_once(__CA_LIB_DIR__."/Search/ObjectSearch.php");
+require_once(__CA_APP_DIR__."/plugins/Phoi/helpers/phonetique_objects.php");
 
 class PartitionsController extends ActionController
 {
@@ -110,6 +111,7 @@ class PartitionsController extends ActionController
         $num_catalogue = $this->request->getParameter("num_catalogue", pString);
         $album_avec_audio = $this->request->getParameter("album_avec_audio", pString);
         $album_avec_image = $this->request->getParameter("album_avec_image", pString);
+        $phonetique = (bool) $this->request->getParameter("phonetique", pString);
 
         $order = $_GET["order"];
         if(!isset($_GET["order"][0])) {
@@ -128,7 +130,21 @@ class PartitionsController extends ActionController
         if($auteur) $vs_search .= " AND ca_entities.preferred_labels.displayname/auteur:".$auteur;
         if($compositeur) $vs_search .= " AND ca_entities.preferred_labels.displayname/compositeur:\"".$compositeur."\"";
         if($labels) $vs_search .= " AND ca_entities.preferred_labels.displayname/label:".$labels;
-        if($titre) $vs_search .= " AND ca_objects.preferred_labels:\"".$titre."\"";
+
+
+        if($phonetique) {
+            // 26 => partitions
+            print phoneticSearch(50, $titre, 26);
+            print "\n\n\n\n\n\n\n\n\n";
+            die();
+        } else {
+            // Normal search
+            if($titre) {
+                foreach(explode(" ",$titre) as $titre_u) {
+                    $vs_search .= " AND ca_objects.preferred_labels:".$titre_u."";
+               }        
+            }
+        }
         if($num_catalogue) $vs_search .= " AND ca_objects.num_edition:\"".$num_catalogue."\"";
         if($album_avec_audio) $vs_search .= " AND ca_objects.album_avec_audio:\"1\"";
         if($album_avec_image) $vs_search .= " AND ca_objects.album_avec_image:\"1\"";
@@ -144,16 +160,19 @@ class PartitionsController extends ActionController
             $options = ["sort"=>"ca_objects.preferred_labels", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 1) {
-            $options = ["sort"=>"ca_objects.date", "sortDirection"=>$order["dir"]];
+            $options = ["sort"=>"ca_entities.preferred_labels.surname", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 2) {
             $options = ["sort"=>"ca_entities.preferred_labels.surname", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 3) {
-            $options = ["sort"=>"ca_entities.preferred_labels.surname", "sortDirection"=>$order["dir"]];
+            $options = ["sort"=>"ca_objects.date", "sortDirection"=>$order["dir"]];
         }
         if($order["column"] == 4) {
             $options = ["sort"=>"ca_objects.pays_liste", "sortDirection"=>$order["dir"]];
+        }
+        if($order["column"] == 5) {
+            $options = ["sort"=>"ca_entities.preferred_labels.surname", "sortDirection"=>$order["dir"]];
         }
         //var_dump($vs_search);die();
 

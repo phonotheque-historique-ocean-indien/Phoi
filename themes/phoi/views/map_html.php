@@ -16,10 +16,18 @@ if ('chaude' == $_SESSION['partie'] && 'froide' != $_GET['partie']) {
     <h2><?php _p('Les partenaires'); ?></h2>
 <?php
 } ?>
+<?php
+// sanitize page name for browse tab
+$browser_tab_label = "Océan indien";
+?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Partenaires/Carte?partie=froide");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
 </div>
 <div style="position:relative;">
     <div id="map" style="height:1000px;z-index:0;"></div>
-    <div id="notes" style="position:fixed;right:50px;top:200px;height:150px;width:40%;z-index:12000;padding:20px;border-radius: 6px;">
+    <div id="notes" style="position:fixed;right:50px;top:200px;height:150px;width:40%;z-index:10;padding:20px;border-radius: 6px;display:none;">
 
     </div>
 </div>
@@ -105,9 +113,27 @@ if ('chaude' == $_SESSION['partie'] && 'froide' != $_GET['partie']) {
             let clicked = $(this).attr("data-country");
             let url = "/index.php/Phoi/Partenaires/GetLinks/pays/"+clicked;
             $.get(url, function(data) {
+                $("#notes").show();
                 $("#notes").html(data);
             });
         })
+
+        var menuShrinked = false;
+        var menuShrinking = false;
+        if($(window).width()>1024) {
+            console.log("$(window).scroll", $(window).width());
+            var elem = $('#phoi-logo-container');
+            var elem2 = $('nav.user-and-lang');
+            elem.addClass("phoi-logo-shrinked");
+            elem2.addClass("user-and-lang-shrinked");
+            menuShrinking=true;
+            elem.animate({"height":"50px"}, 1000, function() {
+                menuShrinking=false;
+            });
+            menuShrinked=true;
+        } else {
+            map.setView([-27.687019526563397, 51.91609740257263], 4);
+        }
     });
 </script>
 

@@ -1,13 +1,7 @@
 <?php
     $loggedin = $this->request->isLoggedIn();
     $country = $this->getVar("country");
-// sanitize page name for browse tab
-$browser_tab_label = "PHOI - Phonogrammes";
 ?>
-<script>
-	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Phonogrammes/Search");
-	window.parent.document.title = "<?= $browser_tab_label ?>";
-</script>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
@@ -98,7 +92,6 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                             <option><?php _p('Interprétations'); ?></option>
                             <option><?php _p('Partitions'); ?></option>
                             <option><?php _p('Personnes'); ?></option>
-                            <option><?php _p('Groupes'); ?></option>
                             <option><?php _p('Livres'); ?></option>
                         </select>
                     </div>
@@ -155,27 +148,6 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                     <p class="control">
                         <input class="input" type="text" name="title" id="form-titre" placeholder="">
                     </p>
-                    <?php                    
-
-//$user = $this->request->getUser();
-//if(($user->getUserId() == 1) || ($user->getUserId() == 2)):
-?>
-                <p class="control">
-                    <div class="field-body" style="align-items:center">
-                        <label class="checkbox" style="padding-left:4px;">
-                            <input type="checkbox" id="form-titre-phonetique" style="margin-top:4px;">
-                        </label>&nbsp;
-                        <div class="is-normal">
-                            <label class="label">Recherche phonétique</label>
-                        </div>
-                        
-                    </div>
-                </p>
-<?php
-//endif;
-
-?>                    
-
                 </div>
 
             </div>
@@ -188,7 +160,7 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                 <div class="field">
                     <p class="control">
                     <input class="input" type="hidden" name="form-tag" id="form-tag" placeholder="">
-                    <input name="_tag_input" class='some_class_name' placeholder='Utiliser des mots du thésaurus'
+                    <input name="_tag_input" class='some_class_name'
                         value='<?= $tag_labels ?>' />
                     </p>
                 </div>
@@ -282,10 +254,8 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 	    <thead>
 		  <tr>
 		    <th>Titre</th>
-            <th>Type de support</th>
 		    <th>Date</th>
 		    <th>Interprète</th>
-            <th>Label</th>
 		    <th>Producteur</th>
 		    <th>Pays</th>
 		  </tr>
@@ -364,10 +334,6 @@ var input = document.querySelector('input[name="_tag_input"]'),
            additionals = additionals+"/titre/"+$("#form-titre").val();
            console.log(additionals);
        	}           
-        if($("#form-titre-phonetique").is(":checked")) {
-           additionals = additionals+"/phonetique/1";
-           console.log(additionals);
-       	}
         if($("#form-pays").val()) {
            additionals = additionals+"/pays/"+$("#form-pays").val();
            console.log(additionals);
@@ -441,10 +407,8 @@ var input = document.querySelector('input[name="_tag_input"]'),
 		            "info": false,
 					"columns": [
 			            { "data": "Titre" },
-                        { "data" : "Type de support"},
 			            { "data": "Date" },
 			            { "data": "Interprète" },
-                        { "data": "Label" },
 			            { "data": "Producteur" },
 			            { "data": "Pays" },        
 			        ]
@@ -459,8 +423,6 @@ var input = document.querySelector('input[name="_tag_input"]'),
     $(document).ready(function() {
        console.log("getResultsList");
        getResultsList('list');
-       $("select#form-pays").val("<?= $country ?>");
-        getResultsList(display);
 
        $('#form-groupes').autocomplete({
         serviceUrl: '/alpaca-data/groupes_autocomplete.php',
@@ -468,21 +430,6 @@ var input = document.querySelector('input[name="_tag_input"]'),
             console.log('selected: ' + suggestion.value + ', ' + suggestion.data);
         }
         });
-
-        $("#form-titre-phonetique").click(function() {
-            window.phonetique = !window.phonetique;
-            if(window.phonetique) {
-                $("input").attr("disabled", "disabled");
-                $("select").attr("disabled", "disabled");
-                $("tags").attr("disabled", "disabled");
-                $("#form-titre").removeAttr("disabled");
-                $("#form-titre-phonetique").removeAttr("disabled");
-            } else {
-                $("input").removeAttr("disabled");
-                $("tags").removeAttr("disabled");
-                $("select").removeAttr("disabled");
-            }
-        })
     });
 </script>
 

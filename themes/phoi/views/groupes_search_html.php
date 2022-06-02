@@ -1,20 +1,20 @@
 <?php
     $loggedin = $this->request->isLoggedIn();
-    $country = $this->getVar("country");
+    $country = $this->request->getParameter("country", pString);
 // sanitize page name for browse tab
-$browser_tab_label = "PHOI - Phonogrammes";
+$browser_tab_label = "PHOI - Groupes";
 ?>
 <script>
-	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Phonogrammes/Search");
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Groupes/Search");
 	window.parent.document.title = "<?= $browser_tab_label ?>";
 </script>
-<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.js"></script>
-<script src="https://unpkg.com/@yaireo/tagify"></script>
-<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
 
 <script>
 /**
@@ -79,7 +79,7 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 </script>
 <?php if ($loggedin) { ?>
 <div style="padding:20px 0;">
-    <a href="/index.php/Contribuer/Do/Form/table/ca_objects/type/Album"><button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i><?php _p('Ajouter'); ?></button></a>
+    <a href="/index.php/Contribuer/Do/Form/table/ca_objects/type/Phonogramme"><button class="button is-primary"><i class="mdi mdi-plus-circle is-large"></i><?php _p('Ajouter'); ?></button></a>
 </div>
 <?php } ?>
 <form method="get" action="<?php echo __CA_URL_ROOT__; ?>/index.php/Search/objects" id="search">
@@ -90,15 +90,15 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
             </div>
             <div class="field-body">
                 <div class="field">
-                    <div class="field select">
+                    <div class="select">
                         <select id="changeSearch">
-                            <option selected="selected"><?php _p('Albums'); ?></option>
+                            <option><?php _p('Albums'); ?></option>
                             <option><?php _p('Enquêtes'); ?></option>
                             <option><?php _p('Créations musicales'); ?></option>
                             <option><?php _p('Interprétations'); ?></option>
                             <option><?php _p('Partitions'); ?></option>
                             <option><?php _p('Personnes'); ?></option>
-                            <option><?php _p('Groupes'); ?></option>
+                            <option selected><?php _p('Groupes'); ?></option>
                             <option><?php _p('Livres'); ?></option>
                         </select>
                     </div>
@@ -109,12 +109,15 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
                 <div class="field">
                     <div class="select">
                         <select id="form-pays">
-<?php 
-    $countries = ["-","Comores","Maurice","Madagascar","Mayotte","La Réunion","Rodrigues","Seychelles","Zanzibar"];
-    foreach($countries as $c) {
-        print "<option ".($c == $country ? "selected=\"selected\"": "").">".$c."</option>";
-    }
-?>
+                            <option selected="selected">-</option>
+                            <option>Comores</option>
+                            <option>Maurice</option>
+                            <option>Madagascar</option>
+                            <option>Mayotte</option>
+                            <option>La Réunion</option>
+                            <option>Rodrigues</option>
+                            <option>Seychelles</option>
+                            <option>Zanzibar</option>
                             </select>
                     </div>
                 </div>
@@ -148,34 +151,23 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
         </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label"><?php _p("Titre de l'album"); ?></label>
+                <label class="label"><?php _p("Nom"); ?></label>
             </div>
             <div class="field-body">
                 <div class="field">
                     <p class="control">
-                        <input class="input" type="text" name="title" id="form-titre" placeholder="">
+                        <input class="input" type="text" name="title" id="form-nom" placeholder="">
                     </p>
-                    <?php                    
-
-//$user = $this->request->getUser();
-//if(($user->getUserId() == 1) || ($user->getUserId() == 2)):
-?>
-                <p class="control">
-                    <div class="field-body" style="align-items:center">
-                        <label class="checkbox" style="padding-left:4px;">
-                            <input type="checkbox" id="form-titre-phonetique" style="margin-top:4px;">
-                        </label>&nbsp;
-                        <div class="is-normal">
-                            <label class="label">Recherche phonétique</label>
+                    <p class="control">
+                        <div class="field-body" style="align-items:center">
+                            <label class="checkbox" style="padding-left:4px;">
+                                <input type="checkbox" id="form-nom-phonetique" style="margin-top:4px;">
+                            </label>&nbsp;
+                            <div class="is-normal">
+                                <label class="label">Recherche phonétique</label>
+                            </div>
                         </div>
-                        
-                    </div>
-                </p>
-<?php
-//endif;
-
-?>                    
-
+                    </p>
                 </div>
 
             </div>
@@ -187,23 +179,7 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
             <div class="field-body">
                 <div class="field">
                     <p class="control">
-                    <input class="input" type="hidden" name="form-tag" id="form-tag" placeholder="">
-                    <input name="_tag_input" class='some_class_name' placeholder='Utiliser des mots du thésaurus'
-                        value='<?= $tag_labels ?>' />
-                    </p>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label"><?php _p('Tous champs'); ?></label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <p class="control">
-                        <input class="input" type="text" name="search" id="keywords" placeholder="">
+                        <input class="input" type="text" name="search" id="form-tag" placeholder="">
                     </p>
                 </div>
 
@@ -276,17 +252,14 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
         <i class="mdi mdi-view-headline is-large" onclick="getResultsList('list');"></i>
         <i class="mdi mdi-view-module is-large" onclick="getResultsList('tiles');"></i>
     </div>
-    <div style="text-align: center;font-weight: 700"><span id="nbresults"></span> <?php _p('résultats albums'); ?></div>
+    <div style="text-align: center;font-weight: 700"><span id="nbresults"></span> <?php _p('résultats parmi les groupes'); ?></div>
     <div id="searchResults"></div>
     <table id="search-results-list">
 	    <thead>
 		  <tr>
-		    <th>Titre</th>
-            <th>Type de support</th>
-		    <th>Date</th>
-		    <th>Interprète</th>
-            <th>Label</th>
-		    <th>Producteur</th>
+		    <th>Nom</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
 		    <th>Pays</th>
 		  </tr>
 		</thead>
@@ -294,56 +267,7 @@ $.fn.DataTable.ext.pager.simple_numbers_no_ellipses = function(page, pages){
 		</tbody>
     </table>
 </div>
-<script>
 
-var input = document.querySelector('input[name="_tag_input"]'),
-    // init Tagify script on the above inputs
-    tagify = new Tagify(input, {
-        enforceWhitelist : true,
-        whitelist: [<?= $tag_labels_quoted ?>],
-      maxTags: 10,
-      dropdown: {
-        maxItems: 20, 
-        classname: "tags-look", 
-        enabled: 0,
-        closeOnSelect: true
-      }
-    }), controller;
-
-    // listen to any keystrokes which modify tagify's input
-    //tagify.on('input', onInput)
-    tagify.on('add', onAdd);
-    tagify.on('remove', onAdd);
-
-    $("body").on("keyup", "span.tagify__input", function() {
-        let value = $(this).text();
-        tagify.whitelist = null // reset the whitelist
-
-        // https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort
-        controller && controller.abort()
-        controller = new AbortController()
-
-        // show loading animation and hide the suggestions dropdown
-        tagify.loading(true).dropdown.hide()
-
-        $.getJSON('https://www.phoi.io/index.php/Thesaurus/View/Json/search/' + value, function(data) {
-            //console.log(data);
-            tagify.whitelist = data; 
-            //console.log(tagify.whitelist);
-            tagify.loading(false).dropdown.show(value);
-        });
-    });
-
-    function onAdd(e){
-        let tag_val = tagify.value.map(function(element){ return element.value; }).join(" ");
-        $('input[name="form-tag"]').val(tag_val);
-        console.log(tag_val);
-
-    }
-
-    let tag_val = tagify.value.map(function(element){ return element.value; }).join(" ");
-    $('input[name="form-tag"]').val(tag_val);
-</script>
 <script>
     var display = "list";
     function getResultsList(disp, page) {
@@ -360,14 +284,14 @@ var input = document.querySelector('input[name="_tag_input"]'),
            additionals = additionals+"/tag/"+$("#form-tag").val();
            console.log(additionals);
        	}           
-        if($("#form-titre").val()) {
-           additionals = additionals+"/titre/"+$("#form-titre").val();
-           console.log(additionals);
-       	}           
-        if($("#form-titre-phonetique").is(":checked")) {
-           additionals = additionals+"/phonetique/1";
+        if($("#form-nom").val()) {
+           additionals = additionals+"/nom/"+$("#form-nom").val();
            console.log(additionals);
        	}
+        if ($("#form-nom-phonetique").is(":checked")) {
+            additionals = additionals + "/phonetique/1";
+            console.log(additionals);
+        }           
         if($("#form-pays").val()) {
            additionals = additionals+"/pays/"+$("#form-pays").val();
            console.log(additionals);
@@ -407,7 +331,7 @@ var input = document.querySelector('input[name="_tag_input"]'),
        	console.log(additionals);
 	   	if(disp == "tiles") { 
 	       	additionals += "/display/tiles"; 
-	       	let url = "/index.php/Phoi/Phonogrammes/Results"+additionals+"/page/"+page;
+	       	let url = "/index.php/Phoi/Groupes/Results"+additionals+"/page/"+page;
 	       	console.log(url);
 	       	$.get(url, function(data) {
 		   		$("#searchResults").html(data);
@@ -421,7 +345,7 @@ var input = document.querySelector('input[name="_tag_input"]'),
 		    $("#search-results-list").show();
 		    if ( $.fn.dataTable.isDataTable('#search-results-list') ) {
 			    table = $('#search-results-list').DataTable();
-			    table.ajax.url("/index.php/Phoi/Phonogrammes/ResultsJson"+additionals).load();
+			    table.ajax.url("/index.php/Phoi/Groupes/ResultsJson"+additionals).load();
 			}
 			else {
 			    table = $('#search-results-list').DataTable({
@@ -430,7 +354,7 @@ var input = document.querySelector('input[name="_tag_input"]'),
 					"serverSide": true,
                     'pagingType': 'simple_numbers_no_ellipses',
                     "ajax": {
-                        "url" : "/index.php/Phoi/Phonogrammes/ResultsJson"+additionals,
+                        "url" : "/index.php/Phoi/Groupes/ResultsJson"+additionals,
                         "dataSrc": function(res){
                             $("#nbresults").text(res.recordsTotal);
                             return res.data;
@@ -440,49 +364,39 @@ var input = document.querySelector('input[name="_tag_input"]'),
 		            "searching": false,
 		            "info": false,
 					"columns": [
-			            { "data": "Titre" },
-                        { "data" : "Type de support"},
-			            { "data": "Date" },
-			            { "data": "Interprète" },
-                        { "data": "Label" },
-			            { "data": "Producteur" },
-			            { "data": "Pays" },        
+			            { "data": "Nom" },
+                        { "data": "Date de début" },
+                        { "data": "Date de fin" },
+			            { "data": "Pays" }
 			        ]
 		          });
                   
 			}
             
 		}
-		console.log("/index.php/Phoi/Phonogrammes/Results"+additionals);
+		console.log("/index.php/Phoi/Groupes/Results"+additionals);
     }
 
     $(document).ready(function() {
        console.log("getResultsList");
        getResultsList('list');
+
+       // Set current value for country (arriving from the map)
        $("select#form-pays").val("<?= $country ?>");
-        getResultsList(display);
+       getResultsList(display);
 
-       $('#form-groupes').autocomplete({
-        serviceUrl: '/alpaca-data/groupes_autocomplete.php',
-        onSelect: function (suggestion) {
-            console.log('selected: ' + suggestion.value + ', ' + suggestion.data);
-        }
-        });
-
-        $("#form-titre-phonetique").click(function() {
+        $("#form-nom-phonetique").click(function() {
             window.phonetique = !window.phonetique;
             if(window.phonetique) {
                 $("input").attr("disabled", "disabled");
                 $("select").attr("disabled", "disabled");
-                $("tags").attr("disabled", "disabled");
-                $("#form-titre").removeAttr("disabled");
-                $("#form-titre-phonetique").removeAttr("disabled");
+                $("#form-nom").removeAttr("disabled");
+                $("#form-nom-phonetique").removeAttr("disabled");
             } else {
                 $("input").removeAttr("disabled");
-                $("tags").removeAttr("disabled");
                 $("select").removeAttr("disabled");
             }
-        })
+        })       
     });
 </script>
 

@@ -2,7 +2,13 @@
     require_once(__CA_MODELS_DIR__."/ca_objects.php");
     $loggedin = $this->request->isLoggedIn();
     $country = $this->getVar('country');
+// sanitize page name for browse tab
+$browser_tab_label = "PHOI - Collectages";
 ?>
+<script>
+	window.parent.history.pushState('', "<?= $browser_tab_label ?>", "/index.php/Phoi/Collectages/Search");
+	window.parent.document.title = "<?= $browser_tab_label ?>";
+</script>
 
 <div class="container">
     <!-- ca_objects_fonds_html.php -->
